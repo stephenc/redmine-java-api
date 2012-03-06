@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class URIConfigurator {
     private static final String XML_URL_POSTFIX = ".xml";
+    private static final String JSON_URL_POSTFIX = ".json";
 
     private static final Map<Class, String> urls = new HashMap<Class, String>() {
         private static final long serialVersionUID = 1L;
@@ -88,6 +89,7 @@ public class URIConfigurator {
 
     public URI getUpdateURI(Class zz, String id, NameValuePair... param) {
         String query = urls.get(zz) + "/" + id + XML_URL_POSTFIX;
+//        String query = urls.get(zz) + "/" + id + JSON_URL_POSTFIX;
         return createURI(query, param);
     }
 
@@ -100,7 +102,8 @@ public class URIConfigurator {
     }
     
     public URI getRetrieveObjectsListURI(Class className, List<NameValuePair> param) {
-        String query = urls.get(className) + XML_URL_POSTFIX;
+        // String query = urls.get(className) + XML_URL_POSTFIX;
+        String query = urls.get(className) + JSON_URL_POSTFIX;
         return createURI(query, param);
     }
 

@@ -9,13 +9,18 @@ import java.util.*;
 
 /**
  * A parser for JSON items sent by Redmine.
+ *  * TODO use maps for keys common to builder and parser
  */
 public class RedmineJSONParser {
 
     private static final String KEY_TOTAL_COUNT = "total_count";
     
-    private static final Map<Class,String> redmineResponseKeys = new HashMap<Class, String>() {
-        private static final long serialVersionUID = 1L;
+    private static final Map<Class,String> redmineSingleResponseKeys = new HashMap<Class, String>() {
+        {
+            put(Project.class, "project");
+        }
+    };
+    private static final Map<Class,String> redmineListResponseKeys = new HashMap<Class, String>() {
         {
             put(Project.class, "projects");
         }
@@ -25,9 +30,22 @@ public class RedmineJSONParser {
     private static JsonParser jsonParser = new JsonParser();
     private static Gson gson = new Gson();
 
+    public static <T> T parseObject(Class<T> clazz, String body) {
+        // determine key for objects list in Redmine response from map
+        String key = redmineSingleResponseKeys.get(clazz);
+        if(key==null) {
+            throw new UnsupportedOperationException("Parsing Redmine object from JSON is not supported for class " + clazz);
+        }
+        // fetch JSON object list from body by key
+        JsonObject jsonResponseObject = (JsonObject) jsonParser.parse(body);
+        JsonElement jsonElement = jsonResponseObject.get(key);
+        // parse
+        return gson.fromJson(jsonElement,clazz);
+    }
+
     public static <T> List<T> parseObjects(Class<T> clazz, String body) {
         // determine key for objects list in Redmine response from map
-        String key = redmineResponseKeys.get(clazz);
+        String key = redmineListResponseKeys.get(clazz);
         if(key==null) {
             throw new UnsupportedOperationException("Parsing Redmine objects from JSON is not supported for class " + clazz);
         }
