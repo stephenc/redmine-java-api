@@ -29,45 +29,35 @@ public class RedmineManagerTest {
     private static TestConfig testConfig;
 
     @BeforeClass
-    public static void oneTimeSetUp() {
+    public static void oneTimeSetUp() throws Exception {
         testConfig = new TestConfig();
         logger.info("Running redmine tests using: " + testConfig.getURI());
-//		mgr = new RedmineManager(TestConfig.getURI(), TestConfig.getApiKey());
-        mgr = new RedmineManager(testConfig.getURI());
-        mgr.setLogin(testConfig.getLogin());
-        mgr.setPassword(testConfig.getPassword());
-        Project junitTestProject = new Project();
-        junitTestProject.setName("test project");
-        junitTestProject.setIdentifier("test"
+        // set credentials
+        mgr = new RedmineManager(testConfig.getURI(), testConfig.getApiKey());
+//        mgr = new RedmineManager(testConfig.getURI());
+//        mgr.setLogin(testConfig.getLogin());
+//        mgr.setPassword(testConfig.getPassword());
+        // create test project
+        Project testProject = new Project();
+        testProject.setName("test project");
+        testProject.setIdentifier("test"
                 + Calendar.getInstance().getTimeInMillis());
-
-        try {
-            Project createdProject = mgr.createProject(junitTestProject);
-            projectKey = createdProject.getIdentifier();
-        } catch (Exception e) {
-            logger.error(e, "Exception while creating test project");
-            Assert.fail("can't create a test project. " + e.getMessage());
-        }
+        projectKey = mgr.createProject(testProject).getIdentifier();
     }
 
     @AfterClass
-    public static void oneTimeTearDown() {
-        try {
+    public static void oneTimeTearDown() throws Exception {
+        // delete test project
             if (mgr != null && projectKey != null) {
                 mgr.deleteProject(projectKey);
             }
-        } catch (Exception e) {
-            logger.error(e, "Exception while deleting test project");
-            Assert.fail("can't delete the test project '" + projectKey + ". reason: "
-                    + e.getMessage());
-        }
     }
 
     @Test
     public void testCreateIssue() {
         try {
             Issue issueToCreate = new Issue();
-            issueToCreate.setSubject("test zzx");
+            issueToCreate.setSubject("test issue " + UUID.randomUUID().toString());
 
             Calendar startCal = Calendar.getInstance();
             // have to clear them because they are ignored by Redmine and prevent from comparison later
@@ -94,7 +84,6 @@ public class RedmineManagerTest {
             issueToCreate.setEstimatedHours(estimatedHours);
 
             Issue newIssue = mgr.createIssue(projectKey, issueToCreate);
-//			System.out.println("created: " + newIssue);
             Assert.assertNotNull("Checking returned result", newIssue);
             Assert.assertNotNull("New issue must have some ID", newIssue.getId());
 
@@ -339,24 +328,28 @@ public class RedmineManagerTest {
         Assert.assertNotNull("Name of tracker of issue should not be null", tracker.getName());
     }
 
+    /**
+     * Tests the retrieval of all {@link Project}s.
+     *
+     * @throws RedmineException        thrown in case something went wrong in Redmine
+     * @throws IOException             thrown in case something went wrong while performing I/O
+     *                                 operations
+     * @throws AuthenticationException thrown in case something went wrong while trying to login
+     * @throws NotFoundException       thrown in case the objects requested for could not be found
+     */
     @Test
-    public void testGetProjects() {
-        try {
-            List<Project> projects = mgr.getProjects();
-            Assert.assertTrue(projects.size() > 0);
-            boolean found = false;
-            for (Project project : projects) {
-                if (project.getIdentifier().equals(projectKey)) {
-                    found = true;
-                    break;
-                }
+    public void testGetProjects() throws RedmineException, IOException, AuthenticationException, NotFoundException {
+        List<Project> projects = mgr.getProjects();
+        Assert.assertTrue(projects.size() > 0);
+        boolean found = false;
+        for (Project project : projects) {
+            if (project.getIdentifier().equals(projectKey)) {
+                found = true;
+                break;
             }
-            if (!found) {
-                Assert.fail("Our project with key '" + projectKey + "' is not found on the server");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
+        }
+        if (!found) {
+            Assert.fail("Our project with key '" + projectKey + "' is not found on the server");
         }
     }
 
@@ -412,8 +405,6 @@ public class RedmineManagerTest {
             List<Tracker> trackers = createdProject.getTrackers();
             Assert.assertNotNull("checking that project has some trackers", trackers);
             Assert.assertTrue("checking that project has some trackers", !(trackers.isEmpty()));
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
         } finally {
             if (key != null) {
                 mgr.deleteProject(key);
@@ -531,6 +522,22 @@ public class RedmineManagerTest {
         Issue issueToCreate = new Issue();
         issueToCreate.setSubject("Summary line 100");
         mgr.createIssue("someNotExistingProjectKey", issueToCreate);
+    }
+
+    /**
+     * Tests the retrieval of a {@link org.redmine.ta.beans.Project} by ID.
+     *
+     * @throws RedmineException        thrown in case something went wrong in Redmine
+     * @throws IOException             thrown in case something went wrong while performing I/O
+     *                                 operations
+     * @throws AuthenticationException thrown in case something went wrong while trying to login
+     * @throws NotFoundException       thrown in case the objects requested for could not be found
+     */
+    @Test
+    public void testGetProject() throws IOException, AuthenticationException, RedmineException, NotFoundException {
+        Project project = mgr.getProjectByKey(projectKey);
+        Assert.assertNotNull("Project retrieved by test project key must not be null", project);
+        Assert.assertEquals("Project retrieved by test project key has wrong identifier", projectKey, project.getId());
     }
 
     @Test(expected = NotFoundException.class)
@@ -1173,12 +1180,12 @@ public class RedmineManagerTest {
 //		assertEquals((Float) spentHours, newIssue.getSpentHours());
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalidTimeEntryFailsWithIAEOnCreate() throws IOException, AuthenticationException, RedmineException, NotFoundException {
         mgr.createTimeEntry(createIncompleteTimeEntry());
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalidTimeEntryFailsWithIAEOnUpdate() throws IOException, AuthenticationException, RedmineException, NotFoundException {
         mgr.update(createIncompleteTimeEntry());
     }
@@ -1343,6 +1350,7 @@ public class RedmineManagerTest {
         Version versionById = mgr.getVersionById(createdVersion.getId());
         assertEquals(description, versionById.getDescription());
     }
+
     /**
      * tests the creation and deletion of a {@link IssueCategory}.
      *
@@ -1577,7 +1585,7 @@ public class RedmineManagerTest {
             }
         }
     }
-    
+
     @Test
     public void getNewsDoesNotFailForNULLProject() throws IOException, AuthenticationException, RedmineException, NotFoundException {
         mgr.getNews(null);
