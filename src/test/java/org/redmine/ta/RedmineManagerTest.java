@@ -3,8 +3,8 @@ package org.redmine.ta;
 import org.junit.*;
 import org.redmine.ta.RedmineManager.INCLUDE;
 import org.redmine.ta.beans.*;
-import org.redmine.ta.internal.logging.Logger;
-import org.redmine.ta.internal.logging.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -45,7 +45,7 @@ public class RedmineManagerTest {
             Project createdProject = mgr.createProject(junitTestProject);
             projectKey = createdProject.getIdentifier();
         } catch (Exception e) {
-            logger.error(e, "Exception while creating test project");
+            logger.error("Exception while creating test project", e);
             Assert.fail("can't create a test project. " + e.getMessage());
         }
     }
@@ -57,7 +57,7 @@ public class RedmineManagerTest {
                 mgr.deleteProject(projectKey);
             }
         } catch (Exception e) {
-            logger.error(e, "Exception while deleting test project");
+            logger.error("Exception while deleting test project", e);
             Assert.fail("can't delete the test project '" + projectKey + ". reason: "
                     + e.getMessage());
         }

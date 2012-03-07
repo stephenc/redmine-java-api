@@ -16,8 +16,8 @@ import org.redmine.ta.DateComparator;
 import org.redmine.ta.MyIOUtils;
 import org.redmine.ta.RedmineTestUtils;
 import org.redmine.ta.beans.*;
-import org.redmine.ta.internal.logging.Logger;
-import org.redmine.ta.internal.logging.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RedmineXMLParserTest {
     private static final String REDMINE_1_1_ISSUES_XML = "redmine_1_1_issues.xml";

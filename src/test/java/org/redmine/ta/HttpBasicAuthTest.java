@@ -3,8 +3,8 @@ package org.redmine.ta;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.redmine.ta.beans.Project;
-import org.redmine.ta.internal.logging.Logger;
-import org.redmine.ta.internal.logging.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
