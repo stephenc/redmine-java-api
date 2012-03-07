@@ -25,7 +25,7 @@
 
   <groupId>com.github.stephenc.connectors</groupId>
   <artifactId>redmine-java-api</artifactId>
-  <version>1.9.0</version>
+  <version>1.9.1-SNAPSHOT</version>
 
   <name>Redmine Java API</name>
   <description>Free open-source Java API for Redmine and Chiliproject bug/task management systems.</description>
