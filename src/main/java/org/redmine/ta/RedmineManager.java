@@ -27,8 +27,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.redmine.ta.beans.*;
 import org.redmine.ta.internal.*;
-import org.redmine.ta.internal.logging.Logger;
-import org.redmine.ta.internal.logging.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.ldap.InitialLdapContext;
 import java.io.BufferedReader;

@@ -7,8 +7,8 @@ import java.util.List;
 import org.redmine.ta.RedmineManager.INCLUDE;
 import org.redmine.ta.beans.*;
 import org.redmine.ta.internal.RedmineXMLGenerator;
-import org.redmine.ta.internal.logging.Logger;
-import org.redmine.ta.internal.logging.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Simple {
     private static Logger logger = LoggerFactory.getLogger(Simple.class);
