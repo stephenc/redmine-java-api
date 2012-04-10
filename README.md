@@ -1,19 +1,27 @@
-Redmine & Chiliproject Java API.
-https://code.google.com/p/redmine-java-api/
+Redmine/Chiliproject Java API
+=============================
 
-Author: Alexey Skorokhodov (alskor@gmail.gom)
+A fork of https://github.com/redminedev/redmine-java-api (previously http://redmine-java-api.googlecode.com)
 
-USAGE.
-Redmine & Chiliproject Java API can be used in both OSGI and regular Java environment. 
+The https://github.com/redminedev/redmine-java-api
 
-1.==== Use as OSGI bundle ====
-  Use the following two OSGI bundles:
-  redmine-api-<version>.jar
-  redmine-deps-<version>.jar
+ - Uses Redmine REST API
+ - Does not require any plugins installed to Redmine/Chiliproject server.
+ - Runs on any standard Java platform as well as Android OS (version 2.2 or newer)
+ - Supports HTTP proxy
+ - Supports GZipped responses from servers
 
-  ==== Use as a regular JAR file ====
-  Add the Redmine API Jar (redmine-api-1.0.3.qualifier.jar) and all jars from 
-  the subfolders in "jars" folder to the classpath of your Java application.
-  There's no need to add redmine-deps-1.0.0-SNAPSHOT.jar to the classpath in this case. 
+This fork makes the following changes:
 
-2. See sample code in the "samples" folder.  
+ - Uses [slf4j] for logging
+ - Has the entire history using LF in the repository
+
+Maven Central dependency:
+    
+    <dependency>
+        <groupId>com.github.stephenc.connectors</groupId>
+        <artifactId>redmine-java-api</artifactId>
+        <version>1.9.0</version>
+    </dependency>
+
+ [slf4j]: http://slf4j.org/
