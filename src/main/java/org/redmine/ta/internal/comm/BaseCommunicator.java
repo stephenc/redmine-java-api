@@ -36,6 +36,7 @@ public class BaseCommunicator implements Communicator<HttpResponse> {
 					.getMaxOpenConnecitons());
 			clientImpl = HttpUtil.getNewHttpClient(connManager);
 		} catch (Exception e) {
+            logger.warn("Could not create connection manager, falling back to default", e);
 			connManager = null;
 			clientImpl = new DefaultHttpClient();
 		}
