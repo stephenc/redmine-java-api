@@ -41,6 +41,7 @@ public class Issue implements Identifiable {
     private List<Journal> journals = new ArrayList<Journal>();
     private List<IssueRelation> relations = new ArrayList<IssueRelation>();
     private List<Attachment> attachments = new ArrayList<Attachment>();
+    private List<Changeset> changesets = new ArrayList<Changeset>();
 
     public Project getProject() {
         return project;
@@ -91,10 +92,10 @@ public class Issue implements Identifiable {
     }
 
     public void setSpentHours(Float spentHours) {
-        this.spentHours = spentHours;
+         this.spentHours = spentHours;
     }
 
-    /**
+  /**
      * Parent Issue ID, or NULL for issues without a parent.
      *
      * @return NULL, if there's no parent
@@ -159,6 +160,9 @@ public class Issue implements Identifiable {
         this.tracker = tracker;
     }
 
+    /**
+     * Description is empty by default, not NULL.
+     */
     public String getDescription() {
         return description;
     }
@@ -232,6 +236,14 @@ public class Issue implements Identifiable {
         this.journals = journals;
     }
 
+    public List<Changeset> getChangesets() {
+        return changesets;
+    }
+
+    public void setChangesets(List<Changeset> changesets) {
+        this.changesets = changesets;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -275,6 +287,8 @@ public class Issue implements Identifiable {
         result = prime * result + ((tracker == null) ? 0 : tracker.hashCode());
         result = prime * result
                 + ((updatedOn == null) ? 0 : updatedOn.hashCode());
+        result = prime * result
+            + ((changesets == null) ? 0 : changesets.hashCode());
         return result;
     }
 
@@ -458,11 +472,17 @@ public class Issue implements Identifiable {
         } else if (!attachments.equals(other.attachments)) {
             return false;
         }
+        if (changesets == null) {
+            if (other.changesets != null) {
+                return false;
+            }
+        } else if (!changesets.equals(other.changesets)) {
+            return false;
+        }
         return true;
     }
 
     /**
-     * @param fieldName
      * @return the value or NULL if the field is not found
      */
     public String getCustomField(String fieldName) {
@@ -480,7 +500,11 @@ public class Issue implements Identifiable {
     }
 
     /**
+     * Relations are only loaded if you include INCLUDE.relations when loading the Issue.
+     *
      * @return list of relations or EMPTY list if no relations, never returns NULL
+     *
+     * @see org.redmine.ta.RedmineManager#getIssueById(Integer id, INCLUDE... include)
      */
     public List<IssueRelation> getRelations() {
         return relations;

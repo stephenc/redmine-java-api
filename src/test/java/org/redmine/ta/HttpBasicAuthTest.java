@@ -6,7 +6,6 @@ import org.redmine.ta.beans.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +36,7 @@ public final class HttpBasicAuthTest {
     }
 
     @Test
-    public void testGetProjectList() throws IOException, AuthenticationException, RedmineException {
+    public void testGetProjectList() throws RedmineException {
 
         final List<Project> projectsWithApiKey = mgrKey.getProjects();
         final List<Project> projectsWithHttpBasicAuth = mgrHttpBasicAuth.getProjects();
