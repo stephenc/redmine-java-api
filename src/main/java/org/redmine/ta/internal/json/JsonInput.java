@@ -107,9 +107,41 @@ public class JsonInput {
 		try {
 			return dateFormat.parse(guess);
 		} catch (ParseException e) {
-			throw new JSONException("Bad date value " + guess);
+            try {
+                return getISO8610DateOrNull(guess);
+            } catch (ParseException e1) {
+                try {
+                    return getISO8610ShortDateOrNull(guess);
+                } catch (ParseException e2) {
+                    throw new JSONException("Bad date value " + guess);
+                }
+            }
 		}
 	}
+
+    private static Date getISO8610DateOrNull(String input) throws ParseException {
+                //NOTE: SimpleDateFormat uses GMT[-+]hh:mm for the TZ which breaks
+        //things a bit.  Before we go on we have to repair this.
+        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssz" );
+
+        //this is zero time so we need to add that TZ indicator for
+        if ( input.endsWith( "Z" ) ) {
+            input = input.substring( 0, input.length() - 1) + "GMT-00:00";
+        } else {
+            int inset = 6;
+
+            String s0 = input.substring( 0, input.length() - inset );
+            String s1 = input.substring( input.length() - inset, input.length() );
+
+            input = s0 + "GMT" + s1;
+        }
+        return df.parse( input );
+    }
+
+    private static Date getISO8610ShortDateOrNull(String input) throws ParseException {
+        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
+        return df.parse( input );
+    }
 
 	/**
 	 * Fetches an optional string from an object.
