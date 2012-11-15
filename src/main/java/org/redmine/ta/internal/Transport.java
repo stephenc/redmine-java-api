@@ -133,7 +133,6 @@ public final class Transport {
 						RedmineJSONParser.MEMBERSHIP_PARSER));
 	}
 
-	/** Uri configurator */
 	private final URIConfigurator configurator;
 	private String login;
 	private String password;
@@ -160,7 +159,7 @@ public final class Transport {
 		URI uri = getURIConfigurator().createURI("users/current.json", params);
 		HttpGet http = new HttpGet(uri);
 		String response = getCommunicator().sendRequest(http);
-		return parseResponce(response, "user", RedmineJSONParser.USER_PARSER);
+		return parseResponse(response, "user", RedmineJSONParser.USER_PARSER);
 	}
 
 	/**
@@ -184,7 +183,7 @@ public final class Transport {
 		setEntity(httpPost, body);
 		String response = getCommunicator().sendRequest(httpPost);
 		logger.debug(response);
-		return parseResponce(response, config.singleObjectName, config.parser);
+		return parseResponse(response, config.singleObjectName, config.parser);
 	}
 
 	/**
@@ -211,7 +210,7 @@ public final class Transport {
 		setEntity(httpPost, body);
 		String response = getCommunicator().sendRequest(httpPost);
 		logger.debug(response);
-		return parseResponce(response, config.singleObjectName, config.parser);
+		return parseResponse(response, config.singleObjectName, config.parser);
 	}
 
 	/*
@@ -272,7 +271,7 @@ public final class Transport {
 		final HttpGet http = new HttpGet(uri);
 		String response = getCommunicator().sendRequest(http);
 		logger.debug(response);
-		return parseResponce(response, config.singleObjectName, config.parser);
+		return parseResponse(response, config.singleObjectName, config.parser);
 	}
 
 	/**
@@ -311,8 +310,8 @@ public final class Transport {
 		request.setEntity(entity);
 
 		final String result = getCommunicator().sendRequest(request);
-		return parseResponce(result, "upload",
-				RedmineJSONParser.UPLOAD_TOKEN_PARSER);
+		return parseResponse(result, "upload",
+            RedmineJSONParser.UPLOAD_TOKEN_PARSER);
 	}
 
 	/**
@@ -374,17 +373,17 @@ public final class Transport {
 
 			final List<T> foundItems;
 			try {
-				final JSONObject responceObject = RedmineJSONParser
-						.getResponce(response);
-				foundItems = JsonInput.getListOrNull(responceObject,
+				final JSONObject responseObject = RedmineJSONParser
+						.getResponse(response);
+				foundItems = JsonInput.getListOrNull(responseObject,
 						config.multiObjectName, config.parser);
 				result.addAll(foundItems);
 
 				/* Necessary for trackers */
-				if (!responceObject.has(KEY_TOTAL_COUNT)) {
+				if (!responseObject.has(KEY_TOTAL_COUNT)) {
 					break;
 				}
-				totalObjectsFoundOnServer = JsonInput.getInt(responceObject,
+				totalObjectsFoundOnServer = JsonInput.getInt(responseObject,
 						KEY_TOTAL_COUNT);
 			} catch (JSONException e) {
 				throw new RedmineFormatException(e);
@@ -422,14 +421,13 @@ public final class Transport {
 
 		HttpGet http = new HttpGet(uri);
 		String response = getCommunicator().sendRequest(http);
-		final JSONObject responceObject;
+		final JSONObject responseObject;
 		try {
-			responceObject = RedmineJSONParser.getResponce(response);
-			return JsonInput.getListNotNull(responceObject,
+			responseObject = RedmineJSONParser.getResponse(response);
+			return JsonInput.getListNotNull(responseObject,
 					config.multiObjectName, config.parser);
 		} catch (JSONException e) {
-			throw new RedmineFormatException("Bad categories responce "
-					+ response, e);
+			throw new RedmineFormatException("Bad categories response " + response, e);
 		}
 	}
 
@@ -450,11 +448,10 @@ public final class Transport {
 		return communicator;
 	}
 
-	private static <T> T parseResponce(String responce, String tag,
-			JsonObjectParser<T> parser) throws RedmineFormatException {
+	private static <T> T parseResponse(String response, String tag,
+                                     JsonObjectParser<T> parser) throws RedmineFormatException {
 		try {
-			return parser.parse(RedmineJSONParser.getResponceSingleObject(
-					responce, tag));
+			return parser.parse(RedmineJSONParser.getResponseSingleObject(response, tag));
 		} catch (JSONException e) {
 			throw new RedmineFormatException(e);
 		}
@@ -510,9 +507,6 @@ public final class Transport {
 
 	/**
 	 * Entity config.
-	 * 
-	 * @author maxkar
-	 * 
 	 */
 	static class EntityConfig<T> {
 		final String singleObjectName;
