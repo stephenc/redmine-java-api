@@ -75,6 +75,9 @@ public class RedmineManagerTest {
 		}
 	}
 
+    /*
+     * Teardown fails due to a redmine bug http://www.redmine.org/issues/11185
+     */
 	@AfterClass
 	public static void oneTimeTearDown() {
 		try {
@@ -178,6 +181,10 @@ public class RedmineManagerTest {
 		}
 	}
 
+    /*
+     * This test caused oneTimeTearDown to fail due to redmine bug
+     * http://www.redmine.org/issues/11185
+     */
 	@Test
 	public void testCreateIssueWithParent() {
 		try {
