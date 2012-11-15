@@ -1,7 +1,7 @@
 Redmine/Chiliproject Java API
 =============================
 
-A fork of https://github.com/redminedev/redmine-java-api (previously http://redmine-java-api.googlecode.com)
+A fork of https://github.com/taskadapter/redmine-java-api (previously [this 404][1] and before that [another 404][2])
 
 The https://github.com/redminedev/redmine-java-api
 
@@ -21,7 +21,9 @@ Maven Central dependency:
     <dependency>
         <groupId>com.github.stephenc.connectors</groupId>
         <artifactId>redmine-java-api</artifactId>
-        <version>1.9.0</version>
+        <version>1.11.0</version>
     </dependency>
 
  [slf4j]: http://slf4j.org/
+ [1]: https://github.com/redminedev/redmine-java-api
+ [2]: http://redmine-java-api.googlecode.com
